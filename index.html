@@ -59,115 +59,181 @@
             font-size: 18px;
             color: #333;
         }
+        .hidden {
+            display: none;
+        }
+        .green-text {
+            color: green;
+            font-weight: bold;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tab {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .tab:hover {
+            background-color: #ccc;
+        }
+        .active {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Cálculo de Custos do Veículo</h1>
-    
-    <!-- Tipo de Veículo -->
-    <div class="form-group">
-        <label for="tipoVeiculo">Tipo de Veículo</label>
-        <select id="tipoVeiculo" required>
-            <option value="financiado">Financiado</option>
-            <option value="alugado">Alugado</option>
-            <option value="quitado">Quitado</option>
-        </select>
+
+    <!-- Tabs de navegação -->
+    <div class="tabs">
+        <div class="tab active" id="tab1" onclick="showTab('tab1')">Cálculo de Custos</div>
+        <div class="tab" id="tab2" onclick="showTab('tab2')">Cálculo da Corrida</div>
     </div>
 
-    <!-- Dados do Veículo -->
-    <div class="form-group">
-        <label for="valorCarro">Valor do Automóvel (R$)</label>
-        <input type="number" id="valorCarro" required>
+    <!-- Formulário de Cálculo de Custos -->
+    <div id="tab1Content">
+        <div class="form-group">
+            <label for="tipoVeiculo">Tipo de Veículo</label>
+            <select id="tipoVeiculo" onchange="mostrarBlocoValor()" required>
+                <option value="financiado">Financiado</option>
+                <option value="alugado">Alugado</option>
+                <option value="quitado">Quitado</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="valorCarro">Valor do Automóvel (R$)</label>
+            <input type="number" id="valorCarro" required>
+        </div>
+
+        <div class="form-group" id="parcelasContainer">
+            <label for="parcela">Valor da Parcela do Financiamento (R$)</label>
+            <input type="number" id="parcela" required>
+        </div>
+
+        <div class="form-group hidden" id="aluguelContainer">
+            <label for="aluguel">Valor do Aluguel Mensal (R$)</label>
+            <input type="number" id="aluguel" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ipva">IPVA Anual (R$)</label>
+            <input type="number" id="ipva" required>
+        </div>
+
+        <div class="form-group">
+            <label for="kmRodados">Quilômetros Rodados por Mês</label>
+            <input type="number" id="kmRodados" required>
+        </div>
+
+        <div class="form-group">
+            <label for="precoSeguro">Preço do Seguro (R$ por mês)</label>
+            <input type="number" id="precoSeguro" required>
+        </div>
+
+        <div class="form-group">
+            <label for="tipoCombustivel">Tipo de Combustível</label>
+            <select id="tipoCombustivel" required>
+                <option value="gasolina">Gasolina</option>
+                <option value="etanol">Etanol</option>
+                <option value="gnv">GNV (Gás Natural Veicular)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="precoCombustivel">Preço do Combustível (R$ por litro ou metro cúbico)</label>
+            <input type="number" id="precoCombustivel" required>
+        </div>
+
+        <div class="form-group">
+            <label for="consumo">Consumo do Veículo (km/l ou km/m³ dependendo do combustível)</label>
+            <input type="number" id="consumo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="custoPneu">Custo do Pneu (R$ por 1 Pneu)</label>
+            <input type="number" id="custoPneu" required>
+        </div>
+
+        <div class="form-group">
+            <label for="vidaUtilPneu">Vida Útil dos Pneus (km)</label>
+            <input type="number" id="vidaUtilPneu" required>
+        </div>
+
+        <div class="form-group">
+            <label for="custoOleo">Custo de Troca de Óleo (R$)</label>
+            <input type="number" id="custoOleo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="frequenciaOleo">Frequência de Troca de Óleo (km)</label>
+            <input type="number" id="frequenciaOleo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="depreciacao">Depreciação Anual (% do valor do veículo)</label>
+            <input type="number" id="depreciacao" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lucroDesejado">Lucro Mensal Desejado (R$)</label>
+            <input type="number" id="lucroDesejado" required>
+        </div>
+
+        <button onclick="calcularCustos()">Calcular</button>
+
+        <div id="result" class="result"></div>
     </div>
 
-    <div class="form-group">
-        <label for="parcela">Valor da Parcela do Financiamento (R$)</label>
-        <input type="number" id="parcela" required>
+    <!-- Formulário de Cálculo da Corrida -->
+    <div id="tab2Content" class="hidden">
+        <div class="form-group">
+            <label for="kmCorrida">Km da Corrida</label>
+            <input type="number" id="kmCorrida" required>
+        </div>
+
+        <div class="form-group">
+            <label for="tarifaMinima">Tarifa Mínima (R$)</label>
+            <input type="number" id="tarifaMinima" required>
+        </div>
+
+        <button onclick="calcularCorrida()">Calcular Valor da Corrida</button>
+
+        <div id="corridaResult" class="result"></div>
     </div>
-
-    <div class="form-group">
-        <label for="ipva">IPVA Anual (R$)</label>
-        <input type="number" id="ipva" required>
-    </div>
-
-    <div class="form-group">
-        <label for="kmRodados">Quilômetros Rodados por Mês</label>
-        <input type="number" id="kmRodados" required>
-    </div>
-
-    <!-- Custo do Seguro -->
-    <div class="form-group">
-        <label for="precoSeguro">Preço do Seguro (R$ por mês)</label>
-        <input type="number" id="precoSeguro" required>
-    </div>
-
-    <!-- Tipo de Combustível -->
-    <div class="form-group">
-        <label for="tipoCombustivel">Tipo de Combustível</label>
-        <select id="tipoCombustivel" required>
-            <option value="gasolina">Gasolina</option>
-            <option value="etanol">Etanol</option>
-            <option value="gnv">GNV (Gás Natural Veicular)</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="precoCombustivel">Preço do Combustível (R$ por litro ou metro cúbico)</label>
-        <input type="number" id="precoCombustivel" required>
-    </div>
-
-    <div class="form-group">
-        <label for="consumo">Consumo do Veículo (km/l ou km/m³ dependendo do combustível)</label>
-        <input type="number" id="consumo" required>
-    </div>
-
-    <!-- Custo de Pneus -->
-    <div class="form-group">
-        <label for="custoPneu">Custo do Pneu (R$ por 4 pneus)</label>
-        <input type="number" id="custoPneu" required>
-    </div>
-
-    <div class="form-group">
-        <label for="vidaUtilPneu">Vida Útil dos Pneus (km)</label>
-        <input type="number" id="vidaUtilPneu" required>
-    </div>
-
-    <!-- Custo de Troca de Óleo -->
-    <div class="form-group">
-        <label for="custoOleo">Custo de Troca de Óleo (R$)</label>
-        <input type="number" id="custoOleo" required>
-    </div>
-
-    <div class="form-group">
-        <label for="frequenciaOleo">Frequência de Troca de Óleo (km)</label>
-        <input type="number" id="frequenciaOleo" required>
-    </div>
-
-    <!-- Depreciação -->
-    <div class="form-group">
-        <label for="depreciacao">Depreciação Anual (% do valor do veículo)</label>
-        <input type="number" id="depreciacao" required>
-    </div>
-
-    <!-- Lucro Mensal Desejado -->
-    <div class="form-group">
-        <label for="lucroDesejado">Lucro Mensal Desejado (R$)</label>
-        <input type="number" id="lucroDesejado" required>
-    </div>
-
-    <button onclick="calcularCustos()">Calcular</button>
-
-    <div id="result" class="result"></div>
 </div>
 
 <script>
+    // Função para exibir a aba correta
+    function showTab(tabId) {
+        const tabContents = document.querySelectorAll('.container > div');
+        const tabs = document.querySelectorAll('.tab');
+
+        // Esconde todas as abas
+        tabContents.forEach(content => content.classList.add('hidden'));
+
+        // Remove a classe "active" de todos os tabs
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Exibe a aba selecionada e marca o tab como ativo
+        document.getElementById(tabId + 'Content').classList.remove('hidden');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // Função para calcular os custos do veículo
     function calcularCustos() {
-        // Coletando os dados dos campos
         const tipoVeiculo = document.getElementById('tipoVeiculo').value;
         const valorCarro = parseFloat(document.getElementById('valorCarro').value);
-        const parcela = parseFloat(document.getElementById('parcela').value);
+        const parcela = tipoVeiculo === 'financiado' ? parseFloat(document.getElementById('parcela').value) : 0;
+        const aluguel = tipoVeiculo === 'alugado' ? parseFloat(document.getElementById('aluguel').value) : 0;
         const ipva = parseFloat(document.getElementById('ipva').value);
         const kmRodados = parseFloat(document.getElementById('kmRodados').value);
         const precoSeguro = parseFloat(document.getElementById('precoSeguro').value);
@@ -180,39 +246,66 @@
         const depreciacao = parseFloat(document.getElementById('depreciacao').value);
         const lucroDesejado = parseFloat(document.getElementById('lucroDesejado').value);
 
-        // Cálculos de custo fixo
         const ipvaMensal = ipva / 12;
         const depreciaçãoAnual = valorCarro * (depreciacao / 100);
         const depreciaçãoMensal = depreciaçãoAnual / 12;
-        const custoFinanciamento = tipoVeiculo === 'financiado' ? parcela : 0;
-        const custoAluguel = tipoVeiculo === 'alugado' ? parcela : 0;
 
-        // Cálculos de custos variáveis
+        const custoFinanciamento = tipoVeiculo === 'financiado' ? parcela : 0;
+        const custoAluguel = tipoVeiculo === 'alugado' ? aluguel : 0;
+
         const custoPneuMensal = (custoPneu / vidaUtilPneu) * kmRodados;
         const custoOleoMensal = (custoOleo / frequenciaOleo) * kmRodados;
-        
-        // Ajuste no cálculo de combustível baseado no tipo de combustível
+
         let custoCombustivelMensal;
         if (document.getElementById('tipoCombustivel').value === 'gnv') {
-            custoCombustivelMensal = (kmRodados / consumo) * precoCombustivel; // GNV usa metro cúbico
+            custoCombustivelMensal = (kmRodados / consumo) * precoCombustivel;
         } else {
-            custoCombustivelMensal = (kmRodados / consumo) * precoCombustivel; // Gasolina e Etanol usam litros
+            custoCombustivelMensal = (kmRodados / consumo) * precoCombustivel;
         }
 
-        // Cálculo de custo total mensal
         const custoTotalMensal = custoFinanciamento + custoAluguel + ipvaMensal + depreciaçãoMensal + custoPneuMensal + custoOleoMensal + custoCombustivelMensal + precoSeguro;
 
-        // Cálculo da tarifa necessária para atingir o lucro desejado
-        const tarifaNecessária = (custoTotalMensal + lucroDesejado) / kmRodados;
+        const custoPorKm = custoTotalMensal / kmRodados;
 
-        // Exibindo o resultado
+        // Calcular tarifa mínima (custo por km + 1,00)
+        const tarifaMinima = custoPorKm + 1;
+
+        // **Cálculo correto do valor diário para reserva de emergência:**
+        // Baseado apenas na depreciação e custos de manutenção (óleo e pneus).
+        const valorDiarioReserva = (depreciaçãoMensal + custoOleoMensal + custoPneuMensal) / 22;
+
+        // Exibindo o resultado detalhado
         document.getElementById('result').innerHTML = `
+            <p><strong>Para obter um lucro líquido de</strong> <span style="color: green; font-weight: bold;">R$ ${lucroDesejado.toFixed(2)}</span>, 
+            <strong>rodando</strong> <span style="color: green; font-weight: bold;">${kmRodados} quilômetros no mês</span>, 
+            <strong>você deve aceitar viagens com tarifas de, no mínimo,</strong> <span style="color: green; font-weight: bold;">R$ ${tarifaMinima.toFixed(2)}</span> 
+            <strong>por quilômetro. Aceitando valores superiores a este, seu lucro por quilômetro será de</strong> <span style="color: green; font-weight: bold;">R$ 1,00</span>.</p>
             <p><strong>Custo Mensal Total:</strong> R$ ${custoTotalMensal.toFixed(2)}</p>
-            <p><strong>Custo por Quilômetro:</strong> R$ ${(custoTotalMensal / kmRodados).toFixed(2)}</p>
-            <p><strong>Tarifa Necessária por Quilômetro (para atingir lucro de R$ ${lucroDesejado}):</strong> R$ ${tarifaNecessária.toFixed(2)}</p>
+            <p><strong>Custo por Quilômetro:</strong> R$ ${custoPorKm.toFixed(2)}</p>
+            <p><strong>Valor diário para reserva de emergência:</strong> R$ ${valorDiarioReserva.toFixed(2)}</p>
+        `;
+
+        // Atualizando a tarifa mínima no cálculo da corrida
+        document.getElementById('tarifaMinima').value = tarifaMinima.toFixed(2);
+    }
+
+    // Função para calcular o valor da corrida
+    function calcularCorrida() {
+        const kmCorrida = parseFloat(document.getElementById('kmCorrida').value);
+        const tarifaMinima = parseFloat(document.getElementById('tarifaMinima').value);
+
+        // Calculando o valor total da corrida
+        const valorCorrida = kmCorrida * tarifaMinima;
+
+        // Exibindo o valor da corrida
+        document.getElementById('corridaResult').innerHTML = `
+            <p><strong>Valor da Corrida:</strong> R$ ${valorCorrida.toFixed(2)}</p>
         `;
     }
+
+    // Chama a função para ajustar os campos ao carregar a página
+    mostrarBlocoValor();
 </script>
 
 </body>
-</
+</html>
